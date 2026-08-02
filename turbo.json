@@ -23,11 +23,11 @@
       ]
     },
 
-    "@vben/web-antd#build:prod": {
+    "@govdata/web-antd#build:prod": {
       "dependsOn": ["^build"],
       "outputs": ["dist/**"]
     },
-    "@vben/web-antd#build:test": {
+    "@govdata/web-antd#build:test": {
       "dependsOn": ["^build"],
       "outputs": ["dist/**"]
     },

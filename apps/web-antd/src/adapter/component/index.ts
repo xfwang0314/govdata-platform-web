@@ -37,17 +37,12 @@ import type {
 } from '@vben/common-ui';
 import type { Recordable } from '@vben/types';
 
-import type { TinymceProps } from '#/components/tinymce/src/type';
 import type { BaseUploadProps } from '#/components/upload/src/props';
 
 import { computed, defineAsyncComponent, defineComponent, h, ref } from 'vue';
 
 import { ApiComponent, globalShareState, IconPicker } from '@vben/common-ui';
 import { $t } from '@vben/locales';
-
-const RichTextarea = defineAsyncComponent(() =>
-  import('#/components/tinymce/index').then((res) => res.Tinymce),
-);
 
 const FileUpload = defineAsyncComponent(() =>
   import('#/components/upload').then((res) => res.FileUpload),
@@ -191,7 +186,6 @@ type StrictComponentType =
   | 'RadioGroup'
   | 'RangePicker'
   | 'Rate'
-  | 'RichTextarea'
   | 'Select'
   | 'Space'
   | 'Switch'
@@ -230,7 +224,6 @@ interface ComponentPropsMapDef {
   RadioGroup: RadioGroupProps;
   RangePicker: RangePickerProps;
   Rate: RateProps;
-  RichTextarea: TinymceProps;
   Select: SelectProps;
   Space: SpaceProps;
   Switch: SwitchProps;
@@ -328,7 +321,6 @@ async function initComponentAdapter() {
     Upload,
     ImageUpload,
     FileUpload,
-    RichTextarea,
   };
 
   // 将组件注册到全局共享状态中

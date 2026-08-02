@@ -25,7 +25,7 @@ RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 
 # 构建 web-antd 应用
 # 使用 filter 只构建需要的应用，避免构建整个 monorepo
-RUN pnpm run build --filter=@vben/web-antd
+RUN pnpm run build --filter=@govdata/web-antd
 
 # ==============================
 # Stage 2: 生产环境运行阶段

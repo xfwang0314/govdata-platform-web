@@ -46,12 +46,21 @@ export const overridesPreferences = defineOverridesPreferences({
      * 在这里设置应用标题
      */
     name: import.meta.env.VITE_APP_TITLE,
+    defaultHomePath: '/dashboard',
     /**
      * 不支持modal模式 需要改动的地方太多
      * 1. 正常重新登录后不会再触发接口请求 即触发登录超时的页面为空数据
      * 2. 切换租户登录后不会重新加载菜单
      */
     // loginExpiredMode: 'modal',
+  },
+  copyright: {
+    companyName: '政务数据中台',
+    companySiteLink: '',
+    date: '2026',
+    enable: true,
+    icp: '',
+    icpLink: '',
   },
   footer: {
     /**
@@ -86,7 +95,7 @@ export const overridesPreferences = defineOverridesPreferences({
     // 错误色
     colorDestructive: 'hsl(359, 100%, 65%)',
     // 主题色
-    colorPrimary: 'hsl(215, 100%, 54%)',
+    colorPrimary: 'hsl(213, 78%, 42%)',
     // 成功色
     colorSuccess: 'hsl(100, 77%, 44%)',
     // 警告色
@@ -104,6 +113,6 @@ export const overridesPreferences = defineOverridesPreferences({
    */
   logo: {
     enable: true,
-    source: '/plus-vben.png',
+    source: '/govdata-logo.svg',
   },
 });

@@ -118,7 +118,7 @@ const formSchema = computed((): VbenFormSchema[] => {
         placeholder: $t('authentication.usernameTip'),
         allowClear: true,
       },
-      defaultValue: 'admin',
+      defaultValue: '',
       fieldName: 'username',
       label: $t('authentication.username'),
       rules: z.string().min(1, { message: $t('authentication.usernameTip') }),
@@ -130,7 +130,7 @@ const formSchema = computed((): VbenFormSchema[] => {
         size: 'large',
         placeholder: $t('authentication.passwordTip'),
       },
-      defaultValue: 'admin123',
+      defaultValue: '',
       fieldName: 'password',
       label: $t('authentication.password'),
       rules: z.string().min(5, { message: $t('authentication.passwordTip') }),
@@ -184,6 +184,9 @@ async function handleAccountLogin(values: LoginAndRegisterParams) {
     ref="loginFormRef"
     :form-schema="formSchema"
     :loading="authStore.loginLoading"
+    :show-code-login="true"
+    :show-forget-password="true"
+    :show-qrcode-login="true"
     :show-register="false"
     :show-third-party-login="true"
     :checkbox-component="Checkbox"
@@ -197,7 +200,6 @@ async function handleAccountLogin(values: LoginAndRegisterParams) {
     :qrcode-login-btn-extra-props="{ size: 'large' }"
     @submit="handleAccountLogin"
   >
-    <!-- 可通过show-third-party-login控制是否显示第三方登录 -->
     <template #third-party-login>
       <OAuthLogin />
     </template>

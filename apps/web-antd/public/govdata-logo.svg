@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title desc">
+  <title id="title">政务数据中台标识</title>
+  <desc id="desc">三条数据流在圆形枢纽中汇聚，象征政务数据融通共享</desc>
+  <defs>
+    <linearGradient id="bg" x1="11" y1="8" x2="53" y2="57" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#176cc2"/>
+      <stop offset="1" stop-color="#082f6b"/>
+    </linearGradient>
+    <linearGradient id="flow" x1="16" y1="45" x2="49" y2="17" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#72d6f4"/>
+      <stop offset="1" stop-color="#fff"/>
+    </linearGradient>
+  </defs>
+  <circle cx="32" cy="32" r="29" fill="url(#bg)"/>
+  <path d="M47.5 17.5A21 21 0 1 0 51 42" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" opacity=".92"/>
+  <path d="M16.5 39.5c8.5 0 8.5-13 17-13 7.5 0 8-8.5 14.5-8.5" fill="none" stroke="url(#flow)" stroke-width="4" stroke-linecap="round"/>
+  <path d="M18 47c10 0 10-11 18-11 7 0 7.5-7.5 13-8" fill="none" stroke="#58bde8" stroke-width="3.5" stroke-linecap="round"/>
+  <path d="M16 31c5.5 0 7-8 12.5-10.5" fill="none" stroke="#a9e8ff" stroke-width="3.5" stroke-linecap="round"/>
+  <circle cx="48" cy="18" r="3.2" fill="#f3c969" stroke="#fff" stroke-width="1.4"/>
+  <circle cx="49" cy="28" r="2.2" fill="#fff"/>
+  <circle cx="18" cy="47" r="2.2" fill="#f3c969"/>
+</svg>

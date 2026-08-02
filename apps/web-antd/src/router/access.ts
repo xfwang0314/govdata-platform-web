@@ -32,11 +32,6 @@ const routeMetaMapping: Record<string, Omit<RouteMeta, 'title'>> = {
     requireHomeRedirect: true,
   },
 
-  '/tool/gen-edit/index/:tableId': {
-    activePath: '/tool/gen',
-    requireHomeRedirect: true,
-  },
-
   '/workflow/design/index': {
     activePath: '/workflow/processDefinition',
     requireHomeRedirect: true,

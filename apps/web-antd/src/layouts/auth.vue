@@ -9,6 +9,7 @@ import { $t } from '#/locales';
 const appName = computed(() => preferences.app.name);
 const logo = computed(() => preferences.logo.source);
 const logoDark = computed(() => preferences.logo.sourceDark);
+const currentYear = new Date().getFullYear();
 </script>
 
 <template>
@@ -19,6 +20,11 @@ const logoDark = computed(() => preferences.logo.sourceDark);
     :page-description="$t('authentication.pageDesc')"
     :page-title="$t('authentication.pageTitle')"
   >
+    <template #copyright>
+      <div class="text-muted-foreground text-sm">
+        Copyright © {{ currentYear }} 政务数据中台
+      </div>
+    </template>
     <!-- 自定义工具栏 -->
     <!-- <template #toolbar></template> -->
   </AuthPageLayout>

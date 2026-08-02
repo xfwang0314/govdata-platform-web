@@ -1,19 +1,8 @@
 {
-  "name": "@vben/web-antd",
-  "version": "2.0.3",
-  "homepage": "https://vben.pro",
-  "bugs": "https://github.com/vbenjs/vue-vben-admin/issues",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/vbenjs/vue-vben-admin.git",
-    "directory": "apps/web-antd"
-  },
+  "name": "@govdata/web-antd",
+  "version": "1.0.0",
+  "description": "政务数据中台前端应用",
   "license": "MIT",
-  "author": {
-    "name": "vben",
-    "email": "ann.vben@gmail.com",
-    "url": "https://github.com/anncwb"
-  },
   "type": "module",
   "scripts": {
     "build:prod": "pnpm vite build",
@@ -31,7 +20,6 @@
     "@antdv-next/auto-import-resolver": "catalog:",
     "@antdv-next/happy-work-theme": "catalog:",
     "@antdv-next/icons": "catalog:",
-    "@tinymce/tinymce-vue": "catalog:",
     "@tiptap/core": "catalog:",
     "@tiptap/extension-highlight": "catalog:",
     "@tiptap/extension-image": "catalog:",
@@ -65,7 +53,6 @@
     "lodash-es": "catalog:",
     "motion-v": "catalog:",
     "pinia": "catalog:",
-    "tinymce": "catalog:",
     "unplugin-vue-components": "catalog:",
     "version-polling": "catalog:",
     "vue": "catalog:",

@@ -29,10 +29,6 @@
     "admin": "Admin监控",
     "job": "任务调度中心"
   },
-  "tool": {
-    "root": "系统工具",
-    "gen": "代码生成"
-  },
   "workflow": {
     "root": "工作流",
     "category": "流程分类",
