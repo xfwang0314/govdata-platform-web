@@ -2,8 +2,11 @@ import type { ID } from '#/api/common';
 
 export type SecretStatus = 'ACTIVE' | 'DISABLED';
 export type SecretType =
+  | 'API_KEY'
   | 'KEY_VALUE'
+  | 'OAUTH2_CLIENT'
   | 'PASSWORD'
+  | 'SSH_PRIVATE_KEY'
   | 'TOKEN'
   | 'USERNAME_PASSWORD';
 
@@ -14,8 +17,22 @@ export interface SecretOption {
 
 export interface SecretOptions {
   ownerModules: SecretOwnerModuleOption[];
-  secretTypes: SecretOption[];
+  secretTypes: SecretTypeOption[];
   statuses: SecretOption[];
+}
+
+export interface SecretFieldDefinition {
+  code: string;
+  inputType: 'PASSWORD' | 'SECRET_TEXTAREA' | 'TEXT';
+  label: string;
+  maxLength: number;
+  required: boolean;
+}
+
+export interface SecretTypeOption extends SecretOption {
+  dynamicFieldsAllowed: boolean;
+  fields: SecretFieldDefinition[];
+  value: SecretType;
 }
 
 export interface SecretOwnerModuleOption extends SecretOption {

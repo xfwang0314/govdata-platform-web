@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { ID } from '#/api/common';
-import type { SecretView } from '#/api/platform/secret/model';
+import type { SecretTypeOption, SecretView } from '#/api/platform/secret/model';
 
 import { ref } from 'vue';
 
@@ -9,7 +9,11 @@ import { useVbenModal } from '@vben/common-ui';
 import { Alert, message, Tag } from 'antdv-next';
 
 import { useVbenForm } from '#/adapter/form';
-import { getSecretApi, rotateSecretApi } from '#/api/platform/secret';
+import {
+  getSecretApi,
+  getSecretOptionsApi,
+  rotateSecretApi,
+} from '#/api/platform/secret';
 
 import SecretValuesEditor from './secret-values-editor.vue';
 
@@ -22,6 +26,7 @@ interface ValuesEditorApi {
 const emit = defineEmits<{ success: [] }>();
 
 const current = ref<null | SecretView>(null);
+const currentTypeDefinition = ref<SecretTypeOption>();
 const valuesEditorRef = ref<null | ValuesEditorApi>(null);
 
 const [Form, formApi] = useVbenForm({
@@ -45,6 +50,7 @@ const [Form, formApi] = useVbenForm({
 
 async function reset() {
   current.value = null;
+  currentTypeDefinition.value = undefined;
   await formApi.resetForm();
   valuesEditorRef.value?.reset();
 }
@@ -104,6 +110,10 @@ const [Modal, modalApi] = useVbenModal({
           // 查询权限和轮换权限可独立授予，查询失败时使用列表快照。
         }
       }
+      const options = await getSecretOptionsApi();
+      currentTypeDefinition.value = options.secretTypes.find(
+        (item) => item.value === current.value?.secretType,
+      );
       await formApi.setValues({
         expireTime: current.value.expireTime,
       });
@@ -150,7 +160,7 @@ const [Modal, modalApi] = useVbenModal({
         </div>
         <SecretValuesEditor
           ref="valuesEditorRef"
-          :secret-type="current?.secretType"
+          :definition="currentTypeDefinition"
         />
       </section>
     </div>
