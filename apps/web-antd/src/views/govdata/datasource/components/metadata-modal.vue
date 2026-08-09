@@ -79,9 +79,13 @@ async function loadDatabases() {
   step.value = 'databases';
   currentDatabase.value = null;
   currentTable.value = null;
+  databases.value = [];
+  tables.value = [];
+  columns.value = [];
   try {
     databases.value = await getDataSourceDatabasesApi(datasourceId.value);
   } catch (error: any) {
+    databases.value = [];
     errorMessage.value = error?.message || '读取数据库/Schema 列表失败';
   } finally {
     loading.value = false;
@@ -95,6 +99,8 @@ async function selectDatabase(db: DatabaseView) {
   currentDatabase.value = db;
   currentTable.value = null;
   tableFilterText.value = '';
+  tables.value = [];
+  columns.value = [];
   step.value = 'tables';
   try {
     tables.value = await getDataSourceTablesApi(datasourceId.value, {
@@ -103,6 +109,7 @@ async function selectDatabase(db: DatabaseView) {
       schema: db.schema ?? undefined,
     });
   } catch (error: any) {
+    tables.value = [];
     errorMessage.value = error?.message || '读取表清单失败';
   } finally {
     loading.value = false;
@@ -114,6 +121,7 @@ async function selectTable(tbl: TableView) {
   loading.value = true;
   errorMessage.value = '';
   currentTable.value = tbl;
+  columns.value = [];
   step.value = 'columns';
   try {
     const schemas: TableSchemaView[] = await inspectDataSourceColumnsApi(
@@ -125,6 +133,7 @@ async function selectTable(tbl: TableView) {
     const firstSchema = schemas && schemas[0];
     columns.value = firstSchema ? firstSchema.columns : [];
   } catch (error: any) {
+    columns.value = [];
     errorMessage.value = error?.message || '探测表字段结构失败';
   } finally {
     loading.value = false;
