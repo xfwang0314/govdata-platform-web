@@ -1,13 +1,14 @@
 <script setup lang="ts">
-import type { SecretType } from '#/api/platform/secret/model';
+import type { SecretTypeOption } from '#/api/platform/secret/model';
 
-import { ref, watch } from 'vue';
+import { reactive, ref, watch } from 'vue';
 
 import { Button, Input } from 'antdv-next';
 
-const props = defineProps<{ secretType?: SecretType }>();
+const props = defineProps<{ definition?: SecretTypeOption }>();
 
 const InputPassword = Input.Password;
+const InputTextarea = Input.TextArea;
 
 interface KeyValueRow {
   id: number;
@@ -20,14 +21,12 @@ interface ValidationResult {
   valid: boolean;
 }
 
-const username = ref('');
-const password = ref('');
-const token = ref('');
+const fixedValues = reactive<Record<string, string>>({});
 const nextRowId = ref(2);
 const keyValueRows = ref<KeyValueRow[]>([{ id: 1, key: '', value: '' }]);
 
 watch(
-  () => props.secretType,
+  () => props.definition,
   () => reset(),
 );
 
@@ -44,29 +43,17 @@ function removeRow(id: number) {
 }
 
 function reset() {
-  username.value = '';
-  password.value = '';
-  token.value = '';
+  for (const key of Object.keys(fixedValues)) delete fixedValues[key];
+  for (const field of props.definition?.fields ?? [])
+    fixedValues[field.code] = '';
   keyValueRows.value = [{ id: nextRowId.value++, key: '', value: '' }];
 }
 
 function validate(): ValidationResult {
-  if (!props.secretType) {
+  if (!props.definition) {
     return { message: '请先选择凭据类型', valid: false };
   }
-  if (props.secretType === 'USERNAME_PASSWORD') {
-    if (!username.value.trim() || !password.value) {
-      return { message: '用户名和密码均不能为空', valid: false };
-    }
-    return { valid: true };
-  }
-  if (props.secretType === 'PASSWORD' && !password.value) {
-    return { message: '密码不能为空', valid: false };
-  }
-  if (props.secretType === 'TOKEN' && !token.value) {
-    return { message: '令牌不能为空', valid: false };
-  }
-  if (props.secretType === 'KEY_VALUE') {
+  if (props.definition.dynamicFieldsAllowed) {
     if (keyValueRows.value.some((row) => !row.key.trim() || !row.value)) {
       return { message: '键名和值均不能为空', valid: false };
     }
@@ -80,30 +67,31 @@ function validate(): ValidationResult {
     if (new Set(keys).size !== keys.length) {
       return { message: '键名不能重复', valid: false };
     }
+  } else {
+    const missing = props.definition.fields.find(
+      (field) => field.required && !fixedValues[field.code]?.trim(),
+    );
+    if (missing) return { message: `${missing.label}不能为空`, valid: false };
   }
   return { valid: true };
 }
 
 function getValues(): Record<string, string> {
-  switch (props.secretType) {
-    case 'KEY_VALUE': {
-      return Object.fromEntries(
-        keyValueRows.value.map((row) => [row.key.trim(), row.value]),
-      );
-    }
-    case 'PASSWORD': {
-      return { password: password.value };
-    }
-    case 'TOKEN': {
-      return { token: token.value };
-    }
-    case 'USERNAME_PASSWORD': {
-      return { password: password.value, username: username.value.trim() };
-    }
-    default: {
-      return {};
-    }
+  if (props.definition?.dynamicFieldsAllowed) {
+    return Object.fromEntries(
+      keyValueRows.value.map((row) => [row.key.trim(), row.value]),
+    );
   }
+  return Object.fromEntries(
+    (props.definition?.fields ?? [])
+      .map((field) => [
+        field.code,
+        field.inputType === 'TEXT'
+          ? (fixedValues[field.code]?.trim() ?? '')
+          : (fixedValues[field.code] ?? ''),
+      ])
+      .filter(([, value]) => value),
+  );
 }
 
 defineExpose({ getValues, reset, validate });
@@ -111,49 +99,47 @@ defineExpose({ getValues, reset, validate });
 
 <template>
   <div class="secret-values">
-    <div v-if="!secretType" class="secret-values__empty">
+    <div v-if="!definition" class="secret-values__empty">
       <span class="iconify mdi--key-variant text-2xl"></span>
       <span>选择凭据类型后填写敏感值</span>
     </div>
 
     <div
-      v-else-if="secretType === 'USERNAME_PASSWORD'"
+      v-else-if="!definition.dynamicFieldsAllowed"
       class="grid grid-cols-1 gap-4 md:grid-cols-2"
     >
-      <div>
-        <div class="mb-1.5 text-sm font-medium">用户名</div>
+      <div
+        v-for="field in definition.fields"
+        :key="field.code"
+        :class="field.inputType === 'SECRET_TEXTAREA' ? 'md:col-span-2' : ''"
+      >
+        <div class="mb-1.5 text-sm font-medium">
+          {{ field.label }}
+          <span v-if="field.required" class="text-red-500">*</span>
+        </div>
         <Input
-          v-model:value="username"
+          v-if="field.inputType === 'TEXT'"
+          v-model:value="fixedValues[field.code]"
           autocomplete="off"
-          placeholder="请输入用户名"
+          :maxlength="field.maxLength"
+          :placeholder="`请输入${field.label}`"
         />
-      </div>
-      <div>
-        <div class="mb-1.5 text-sm font-medium">密码</div>
-        <InputPassword
-          v-model:value="password"
+        <InputTextarea
+          v-else-if="field.inputType === 'SECRET_TEXTAREA'"
+          v-model:value="fixedValues[field.code]"
+          :auto-size="{ minRows: 5, maxRows: 10 }"
           autocomplete="new-password"
-          placeholder="请输入密码"
+          :maxlength="field.maxLength"
+          :placeholder="`请输入或粘贴${field.label}`"
+        />
+        <InputPassword
+          v-else
+          v-model:value="fixedValues[field.code]"
+          autocomplete="new-password"
+          :maxlength="field.maxLength"
+          :placeholder="`请输入${field.label}`"
         />
       </div>
-    </div>
-
-    <div v-else-if="secretType === 'PASSWORD'">
-      <div class="mb-1.5 text-sm font-medium">密码</div>
-      <InputPassword
-        v-model:value="password"
-        autocomplete="new-password"
-        placeholder="请输入密码"
-      />
-    </div>
-
-    <div v-else-if="secretType === 'TOKEN'">
-      <div class="mb-1.5 text-sm font-medium">令牌</div>
-      <InputPassword
-        v-model:value="token"
-        autocomplete="new-password"
-        placeholder="请输入 Token"
-      />
     </div>
 
     <div v-else>

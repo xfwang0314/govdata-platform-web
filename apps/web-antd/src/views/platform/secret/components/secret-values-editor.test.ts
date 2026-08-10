@@ -21,7 +21,7 @@ vi.mock('antdv-next', async () => {
         });
     },
   });
-  Object.assign(Input, { Password: Input });
+  Object.assign(Input, { Password: Input, TextArea: Input });
   return {
     Button: defineComponent({
       setup:
@@ -45,8 +45,28 @@ describe('secretValuesEditor', () => {
     const app = createApp({
       setup: () => () =>
         h(SecretValuesEditor, {
+          definition: {
+            dynamicFieldsAllowed: false,
+            fields: [
+              {
+                code: 'username',
+                inputType: 'TEXT',
+                label: '用户名',
+                maxLength: 500,
+                required: true,
+              },
+              {
+                code: 'password',
+                inputType: 'PASSWORD',
+                label: '密码',
+                maxLength: 8192,
+                required: true,
+              },
+            ],
+            label: '用户名和密码',
+            value: 'USERNAME_PASSWORD',
+          },
           ref: editor,
-          secretType: 'USERNAME_PASSWORD',
         }),
     });
     app.mount(host);

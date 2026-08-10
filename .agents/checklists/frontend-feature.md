@@ -5,6 +5,7 @@
 - [ ] 已阅读 `.docs/standards/frontend-coding.md` 和 `AGENTS.md`。
 - [ ] 已确认功能归属的领域目录（`views/<domain>/<module>/` 和 `api/<domain>/<module>/`）。
 - [ ] 已确认 API 请求集中收口在 `api/<domain>/<module>/index.ts`，类型在 `model.d.ts` 中定义。
+- [ ] 凭据、Connector 等可扩展表单消费后端 Schema，未按产品编码复制字段与认证规则。
 
 ## 设计与实现
 
@@ -17,6 +18,7 @@
 - [ ] 需要行快照的 Modal/Drawer 在打开前通过 `setData` 提供数据。
 - [ ] 异步初始化使用 `loading(true)` 与 `try/finally`，同步初始化未制造无意义 Loading。
 - [ ] 受控业务按钮绑定权限码，普通交互按钮未滥用权限指令。
+- [ ] 条件字段按后端适用关系显示和提交；无凭据认证提交 `null`，隐藏字段不会残留在请求中。
 
 ## 验证
 

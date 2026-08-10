@@ -3,6 +3,7 @@ import type { VbenFormSchema } from '#/adapter/form';
 import type {
   SecretOwnerModuleOption,
   SecretType,
+  SecretTypeOption,
 } from '#/api/platform/secret/model';
 
 import { ref } from 'vue';
@@ -24,7 +25,8 @@ interface ValuesEditorApi {
 
 const emit = defineEmits<{ success: [] }>();
 
-const selectedType = ref<SecretType>();
+const selectedTypeDefinition = ref<SecretTypeOption>();
+const typeOptions = ref<SecretTypeOption[]>([]);
 const ownerModules = ref<SecretOwnerModuleOption[]>([]);
 const valuesEditorRef = ref<null | ValuesEditorApi>(null);
 
@@ -75,7 +77,9 @@ function schema(): VbenFormSchema[] {
       component: 'Select',
       componentProps: {
         onChange: (value: SecretType) => {
-          selectedType.value = value;
+          selectedTypeDefinition.value = typeOptions.value.find(
+            (item) => item.value === value,
+          );
         },
         options: [],
         placeholder: '请选择凭据结构',
@@ -133,7 +137,7 @@ const [Form, formApi] = useVbenForm({
 
 async function reset() {
   await formApi.resetForm();
-  selectedType.value = undefined;
+  selectedTypeDefinition.value = undefined;
   valuesEditorRef.value?.reset();
 }
 
@@ -177,12 +181,15 @@ const [Modal, modalApi] = useVbenModal({
       modalApi.modalLoading(true);
       await reset();
       const options = await getSecretOptionsApi();
+      typeOptions.value = options.secretTypes;
       ownerModules.value = options.ownerModules;
       formApi.updateSchema([
         {
           componentProps: {
             onChange: (value: SecretType) => {
-              selectedType.value = value;
+              selectedTypeDefinition.value = typeOptions.value.find(
+                (item) => item.value === value,
+              );
             },
             options: options.secretTypes,
             placeholder: '请选择凭据结构',
@@ -215,7 +222,10 @@ const [Modal, modalApi] = useVbenModal({
           <span class="text-sm font-semibold">敏感值</span>
           <Tag color="gold">仅写入一次</Tag>
         </div>
-        <SecretValuesEditor ref="valuesEditorRef" :secret-type="selectedType" />
+        <SecretValuesEditor
+          ref="valuesEditorRef"
+          :definition="selectedTypeDefinition"
+        />
       </section>
     </div>
   </Modal>
