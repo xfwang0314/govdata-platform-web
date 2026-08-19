@@ -7,18 +7,47 @@ function source(fileName: string) {
 }
 
 describe('platform secret page contracts', () => {
-  it('provides an explicit click target for complete purpose scope', () => {
+  it('uses a compact credential directory summary driven by backend options', () => {
     const page = source('./index.vue');
+    const summaryCard = source('./components/secret-summary-card.vue');
+    const tableComponent = source('./components/secret-table.vue');
 
-    expect(page).toContain('<Popover');
-    expect(page).toContain('查看全部');
+    expect(summaryCard).toContain('平台凭据保险库');
+    expect(page).toContain('secretTypeCount');
+    expect(page).toContain('ownerModuleCount');
+    expect(tableComponent).toContain('table-title="凭据目录"');
+  });
+
+  it('preserves create, detail, edit, rotate and status operations', () => {
+    const page = source('./index.vue');
+    const tableComponent = source('./components/secret-table.vue');
+
+    expect(page).toContain('handleAdd');
+    expect(page).toContain('handleDetail(row: SecretView)');
+    expect(page).toContain('handleEdit(row: SecretView)');
+    expect(page).toContain('handleRotate(row: SecretView)');
+    expect(tableComponent).toContain(
+      'handleStatusChange(Boolean(enabled), row)',
+    );
+    expect(page).toContain('<CreateModal');
+    expect(page).toContain('<EditModal');
+    expect(page).toContain('<RotateModal');
+    expect(page).toContain('<DetailDrawer />');
+  });
+
+  it('provides an explicit click target for complete purpose scope', () => {
+    const tableComponent = source('./components/secret-table.vue');
+
+    expect(tableComponent).toContain('<Popover');
+    expect(tableComponent).toContain('查看全部');
   });
 
   it('uses the same query permission for both detail entry points', () => {
     const page = source('./index.vue');
+    const tableComponent = source('./components/secret-table.vue');
 
     expect(page).toContain('const canQuerySecret');
-    expect(page).toContain('v-if="canQuerySecret"');
+    expect(tableComponent).toContain('v-if="canQuerySecret"');
   });
 
   it('always releases modal loading while preparing rotation', () => {
@@ -62,13 +91,13 @@ describe('platform secret page contracts', () => {
 
   it('exposes the optional description across secret management views', () => {
     const model = source('../../../api/platform/secret/model.d.ts');
-    const page = source('./index.vue');
+    const tableComponent = source('./components/secret-table.vue');
     const createModal = source('./components/secret-create-modal.vue');
     const editModal = source('./components/secret-edit-modal.vue');
     const detailDrawer = source('./components/secret-detail-drawer.vue');
 
     expect(model).toContain('description: null | string');
-    expect(page).toContain('row.description');
+    expect(tableComponent).toContain('row.description');
     expect(createModal).toContain("fieldName: 'description'");
     expect(editModal).toContain("fieldName: 'description'");
     expect(detailDrawer).toContain("label: '凭据描述'");

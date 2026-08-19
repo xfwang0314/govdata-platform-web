@@ -34,33 +34,33 @@ export const columns: VxeGridProps['columns'] = [
   { type: 'checkbox', width: 60 },
   {
     field: 'datasourceName',
-    title: '名称 / 编码',
-    minWidth: 180,
+    title: '数据源',
+    minWidth: 210,
     slots: { default: 'datasourceName' },
   },
   {
     field: 'connectorCode',
     title: '数据源类型',
-    minWidth: 120,
+    minWidth: 130,
     slots: { default: 'connectorCode' },
   },
   {
     field: 'environment',
     title: '环境',
-    minWidth: 90,
+    minWidth: 100,
     slots: { default: 'environment' },
   },
   {
     field: 'status',
     title: '状态',
     slots: { default: 'status' },
-    minWidth: 100,
+    minWidth: 130,
   },
   {
     field: 'lastTestStatus',
     title: '连通性测试',
     slots: { default: 'lastTestStatus' },
-    minWidth: 140,
+    minWidth: 155,
   },
   {
     field: 'createTime',
@@ -74,6 +74,6 @@ export const columns: VxeGridProps['columns'] = [
     slots: { default: 'action' },
     title: '操作',
     resizable: false,
-    width: 250,
+    width: 245,
   },
 ];

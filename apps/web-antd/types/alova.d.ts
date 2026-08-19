@@ -1,4 +1,3 @@
-/* eslint-disable unicorn/require-module-specifiers */
 import type { AlovaInstanceType } from '#/utils/http';
 
 import 'alova';
@@ -71,5 +70,3 @@ declare module 'axios' {
     withToken?: boolean;
   }
 }
-
-export {};

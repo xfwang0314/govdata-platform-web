@@ -106,6 +106,12 @@ export interface DataSourceCommand {
   securityLevel: number;
 }
 
+export interface ProjectionReconcileView {
+  hasMore: boolean;
+  nextAfterId: ID | null;
+  processed: number;
+}
+
 export interface ConnectionTestView {
   datasourceId: ID;
   latencyMs: number;

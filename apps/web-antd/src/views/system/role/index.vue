@@ -10,7 +10,7 @@ import { computed } from 'vue';
 import { useRouter } from 'vue-router';
 
 import { useAccess } from '@vben/access';
-import { Page, useVbenDrawer, useVbenModal } from '@vben/common-ui';
+import { Page, useVbenDrawer } from '@vben/common-ui';
 import {
   ADMIN_ROLE_KEY,
   EnableStatus,
@@ -31,7 +31,6 @@ import { ApiSwitch } from '#/components/global';
 import { useBlobExport } from '#/utils/file/export';
 
 import { columns, querySchema } from './data';
-import roleAuthModal from './role-auth-modal.vue';
 import roleDrawer from './role-drawer.vue';
 
 const formOptions: VbenFormProps = {
@@ -128,21 +127,12 @@ async function handleExport() {
   const formValues = await tableApi.formApi.getValues();
   // 文件名
   const fileName = buildExportFileName('角色数据');
-  exportBlob({ data: formValues, fileName });
+  await exportBlob({ data: formValues, fileName });
 }
 
 const { hasAccessByCodes, hasAccessByRoles } = useAccess();
 
 const isSuperAdmin = computed(() => hasAccessByRoles([SUPERADMIN_ROLE_KEY]));
-
-const [RoleAuthModal, authModalApi] = useVbenModal({
-  connectedComponent: roleAuthModal,
-});
-
-function handleAuthEdit(record: Role) {
-  authModalApi.setData({ id: record.roleId });
-  authModalApi.open();
-}
 
 const router = useRouter();
 function handleAssignRole(record: Role) {
@@ -217,12 +207,6 @@ async function handleChangeStatus(checked: SwitchProps['checked'], row: Role) {
             </action-button>
             <action-button
               v-access:code="['system:role:edit']"
-              @click.stop="handleAuthEdit(row)"
-            >
-              权限
-            </action-button>
-            <action-button
-              v-access:code="['system:role:edit']"
               @click.stop="handleAssignRole(row)"
             >
               分配
@@ -245,6 +229,5 @@ async function handleChangeStatus(checked: SwitchProps['checked'], row: Role) {
       </template>
     </BasicTable>
     <RoleDrawer @reload="tableApi.query()" />
-    <RoleAuthModal @reload="tableApi.query()" />
   </Page>
 </template>

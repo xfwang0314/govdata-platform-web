@@ -1,28 +1,12 @@
 import type { FormSchemaGetter } from '#/adapter/form';
 import type { VxeGridProps } from '#/adapter/vxe-table';
 
-import { markRaw } from 'vue';
-
 import { DictEnum } from '@vben/constants';
 import { getPopupContainer } from '@vben/utils';
 
 import { Tag } from 'antdv-next';
 
-import { DefaultSlot } from '#/components/global/slot';
-import { TreeSelectPanel } from '#/components/tree';
 import { getDictOptions } from '#/utils/dict';
-
-/**
- * authScopeOptions user也会用到
- */
-export const authScopeOptions = [
-  { color: 'green', label: '全部数据权限', value: '1' },
-  { color: 'default', label: '自定数据权限', value: '2' },
-  { color: 'orange', label: '本部门数据权限', value: '3' },
-  { color: 'cyan', label: '本部门及以下数据权限', value: '4' },
-  { color: 'error', label: '仅本人数据权限', value: '5' },
-  { color: 'default', label: '部门及以下或本人数据权限', value: '6' },
-];
 
 export const querySchema: FormSchemaGetter = () => [
   {
@@ -66,19 +50,8 @@ export const columns: VxeGridProps['columns'] = [
     },
   },
   {
-    title: '数据权限',
-    field: 'dataScope',
-    slots: {
-      default: ({ row }) => {
-        const found = authScopeOptions.find(
-          (item) => item.value === row.dataScope,
-        );
-        if (found) {
-          return <Tag color={found.color}>{found.label}</Tag>;
-        }
-        return <Tag>{row.dataScope}</Tag>;
-      },
-    },
+    title: '权属部门',
+    field: 'ownerDeptName',
   },
   {
     title: '排序',
@@ -137,6 +110,15 @@ export const drawerSchema: FormSchemaGetter = () => [
     },
   },
   {
+    component: 'TreeSelect',
+    componentProps: {
+      getPopupContainer,
+    },
+    fieldName: 'ownerDeptId',
+    label: '权属部门',
+    rules: 'selectRequired',
+  },
+  {
     component: 'Select',
     componentProps: {
       allowClear: false,
@@ -171,82 +153,5 @@ export const drawerSchema: FormSchemaGetter = () => [
     fieldName: 'remark',
     formItemClass: 'col-span-2',
     label: '备注',
-  },
-];
-
-export const authModalSchemas: FormSchemaGetter = () => [
-  {
-    component: 'Input',
-    dependencies: {
-      show: () => false,
-      triggerFields: [''],
-    },
-    fieldName: 'roleId',
-    label: '角色ID',
-  },
-  {
-    component: 'Input',
-    componentProps: {
-      disabled: true,
-    },
-    fieldName: 'roleName',
-    label: '角色名称',
-  },
-  {
-    component: 'Input',
-    componentProps: {
-      disabled: true,
-    },
-    fieldName: 'roleKey',
-    label: '权限标识',
-  },
-  {
-    component: 'Select',
-    componentProps: {
-      allowClear: false,
-      getPopupContainer,
-      options: authScopeOptions,
-    },
-    fieldName: 'dataScope',
-    help: '更改后需要用户重新登录才能生效',
-    label: '权限范围',
-  },
-  {
-    component: 'Radio',
-    dependencies: {
-      show: () => false,
-      triggerFields: [''],
-    },
-    fieldName: 'deptCheckStrictly',
-    label: 'deptCheckStrictly',
-  },
-  {
-    // 这种的场景基本上是一个组件需要绑定两个或以上的场景
-    component: markRaw(DefaultSlot),
-    defaultValue: [],
-    componentProps: {
-      rootDivAttrs: {
-        class: 'w-full',
-      },
-    },
-    dependencies: {
-      show: (values) => values.dataScope === '2',
-      triggerFields: ['dataScope'],
-    },
-    renderComponentContent: (model) => ({
-      default: (attrs: any) => {
-        return (
-          <TreeSelectPanel
-            expand-all-on-init={true}
-            treeData={attrs.treeData}
-            v-model:checkStrictly={model.deptCheckStrictly}
-            v-model:value={model.deptIds}
-          />
-        );
-      },
-    }),
-    fieldName: 'deptIds',
-    help: '更改后立即生效',
-    label: '部门权限',
   },
 ];

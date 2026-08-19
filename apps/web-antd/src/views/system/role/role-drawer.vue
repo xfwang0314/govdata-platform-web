@@ -8,11 +8,12 @@ import { computed, nextTick, ref } from 'vue';
 
 import { useVbenDrawer } from '@vben/common-ui';
 import { $t } from '@vben/locales';
-import { cloneDeep, eachTree } from '@vben/utils';
+import { addFullName, cloneDeep, eachTree } from '@vben/utils';
 
 import { useVbenForm } from '#/adapter/form';
 import { menuTreeSelect, roleMenuTreeSelect } from '#/api/system/menu';
 import { roleAdd, roleInfo, roleUpdate } from '#/api/system/role';
+import { getDeptTree } from '#/api/system/user';
 import { MenuSelectTable } from '#/components/tree';
 import { defaultFormValueGetter, useBeforeCloseDiff } from '#/utils/popup';
 
@@ -39,6 +40,23 @@ const [BasicForm, formApi] = useVbenForm({
 });
 
 const menuTree = ref<MenuOption[]>([]);
+async function setupOwnerDeptSelect() {
+  const deptTree = await getDeptTree();
+  addFullName(deptTree, 'label', ' / ');
+  formApi.updateSchema([
+    {
+      componentProps: {
+        fieldNames: { label: 'label', value: 'id' },
+        treeData: deptTree,
+        treeDefaultExpandAll: true,
+        treeLine: { showLeafIcon: false },
+        treeNodeLabelProp: 'fullName',
+      },
+      fieldName: 'ownerDeptId',
+    },
+  ]);
+}
+
 async function setupMenuTree(id?: number | string) {
   if (id) {
     const resp = await roleMenuTreeSelect(id);
@@ -95,6 +113,8 @@ const [BasicDrawer, drawerApi] = useVbenDrawer({
     const { id } = drawerApi.getData() as { id?: number | string };
     isUpdate.value = !!id;
 
+    await setupOwnerDeptSelect();
+
     if (isUpdate.value && id) {
       const record = await roleInfo(id);
       await formApi.setValues(record);
@@ -124,7 +144,7 @@ async function handleConfirm() {
     await (isUpdate.value ? roleUpdate(data) : roleAdd(data));
     emit('reload');
     resetInitialized();
-    drawerApi.close();
+    await drawerApi.close();
   } catch (error) {
     console.error(error);
   } finally {

@@ -5,6 +5,7 @@ import type {
   DataSourceCommand,
   DataSourceOptionsView,
   DataSourceView,
+  ProjectionReconcileView,
   SecretReference,
   TableSchemaView,
   TableView,
@@ -70,6 +71,17 @@ export function disableDataSourceApi(id: ID) {
 
 export function deleteDataSourceApi(id: ID) {
   return alovaInstance.delete<void>(`${BASE_URL}/${id}`);
+}
+
+export function reconcileDataSourceAuthorizationProjectionsApi(
+  afterId: ID = 0,
+  limit = 500,
+) {
+  return alovaInstance.post<ProjectionReconcileView>(
+    `${BASE_URL}/authorization-projections/reconcile`,
+    undefined,
+    { params: { afterId, limit } },
+  );
 }
 
 export function getDataSourceDatabasesApi(id: ID) {

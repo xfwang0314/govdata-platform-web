@@ -1,5 +1,3 @@
-export {};
-
 export interface Flow {
   id: string;
   createTime: string;

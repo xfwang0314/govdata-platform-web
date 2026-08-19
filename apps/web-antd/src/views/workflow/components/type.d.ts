@@ -1,4 +1,3 @@
-export {};
 /**
  * myself 我发起的
  * readonly 只读 只用于查看

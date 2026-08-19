@@ -35,7 +35,6 @@ export interface Role {
   roleName: string;
   roleKey: string;
   roleSort: number;
-  dataScope: string;
   menuCheckStrictly?: boolean;
   deptCheckStrictly?: boolean;
   status: string;

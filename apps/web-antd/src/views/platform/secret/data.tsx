@@ -45,7 +45,7 @@ export const columns: VxeGridProps['columns'] = [
   {
     align: 'left',
     field: 'secretName',
-    minWidth: 230,
+    minWidth: 240,
     slots: { default: 'secretName' },
     title: '凭据信息',
   },
@@ -57,13 +57,13 @@ export const columns: VxeGridProps['columns'] = [
   },
   {
     field: 'ownerModule',
-    minWidth: 170,
+    minWidth: 160,
     slots: { default: 'ownerModule' },
     title: '所属模块',
   },
   {
     field: 'purposeScope',
-    minWidth: 220,
+    minWidth: 230,
     slots: { default: 'purposeScope' },
     title: '用途范围',
   },
@@ -77,7 +77,7 @@ export const columns: VxeGridProps['columns'] = [
   {
     align: 'center',
     field: 'status',
-    minWidth: 105,
+    minWidth: 125,
     slots: { default: 'status' },
     title: '状态',
   },
@@ -98,6 +98,6 @@ export const columns: VxeGridProps['columns'] = [
     resizable: false,
     slots: { default: 'action' },
     title: '操作',
-    width: 195,
+    width: 180,
   },
 ];

@@ -1,5 +1,5 @@
 import type { User } from '../user/model';
-import type { DeptResp, Role } from './model';
+import type { Role } from './model';
 
 import type { ID, IDS, PageQuery, PageResult } from '#/api/common';
 
@@ -12,8 +12,6 @@ enum Api {
   roleAuthCancelAll = '/system/role/authUser/cancelAll',
   roleAuthSelectAll = '/system/role/authUser/selectAll',
   roleChangeStatus = '/system/role/changeStatus',
-  roleDataScope = '/system/role/dataScope',
-  roleDeptTree = '/system/role/deptTree',
   roleExport = '/system/role/export',
   roleList = '/system/role/list',
   roleOptionSelect = '/system/role/optionselect',
@@ -89,15 +87,6 @@ export function roleRemove(roleIds: IDS) {
 }
 
 /**
- * 更新数据权限
- * @param data
- * @returns void
- */
-export function roleDataScope(data: any) {
-  return alovaInstance.putWithMsg<void>(Api.roleDataScope, data);
-}
-
-/**
  * @deprecated 全局并没有用到这个方法
  */
 export function roleOptionSelect(params?: any) {
@@ -154,13 +143,4 @@ export function roleSelectAll(roleId: ID, userIds: IDS) {
   return alovaInstance.putWithMsg<void>(
     `${Api.roleAuthSelectAll}?roleId=${roleId}&userIds=${userIds.join(',')}`,
   );
-}
-
-/**
- * 根据角色id获取部门树
- * @param roleId 角色id
- * @returns DeptResp
- */
-export function roleDeptTree(roleId: ID) {
-  return alovaInstance.get<DeptResp>(`${Api.roleDeptTree}/${roleId}`);
 }

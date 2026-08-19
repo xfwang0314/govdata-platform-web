@@ -1,13 +1,9 @@
 <script setup lang="ts">
-import type { Role } from '#/api/system/user/model';
-
-import { computed, h, onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 
 import { useVbenDrawer } from '@vben/common-ui';
 import { $t } from '@vben/locales';
 import { addFullName, cloneDeep, getPopupContainer } from '@vben/utils';
-
-import { Tag } from 'antdv-next';
 
 import { useVbenForm } from '#/adapter/form';
 import { configInfoByKey } from '#/api/system/config';
@@ -19,7 +15,6 @@ import {
   userUpdate,
 } from '#/api/system/user';
 import { defaultFormValueGetter, useBeforeCloseDiff } from '#/utils/popup';
-import { authScopeOptions } from '#/views/system/role/data';
 
 import { drawerSchema } from './data';
 
@@ -42,24 +37,6 @@ const [BasicForm, formApi] = useVbenForm({
   showDefaultActions: false,
   wrapperClass: 'grid-cols-2',
 });
-
-/**
- * 生成角色的自定义label
- * 也可以用option插槽来做
- * renderComponentContent: () => ({
-    option: ({value, label, [disabled, key, title]}) => '',
-  }),
- */
-function genRoleOptionlabel(role: Role) {
-  const found = authScopeOptions.find((item) => item.value === role.dataScope);
-  if (!found) {
-    return role.roleName;
-  }
-  return h('div', { class: 'flex items-center gap-[6px]' }, [
-    h('span', null, role.roleName),
-    h(Tag, { color: found.color }, () => found.label),
-  ]);
-}
 
 /**
  * 岗位的加载
@@ -181,7 +158,7 @@ const [BasicDrawer, drawerApi] = useVbenDrawer({
           // title用于选中后回填到输入框 默认为label
           optionLabelProp: 'title',
           options: roles.map((item) => ({
-            label: genRoleOptionlabel(item),
+            label: item.roleName,
             // title用于选中后回填到输入框 默认为label
             title: item.roleName,
             value: item.roleId,

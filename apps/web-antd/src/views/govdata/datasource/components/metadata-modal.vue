@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type {ID} from '#/api/common';
+import type { ID } from '#/api/common';
 import type {
   ColumnView,
   DatabaseView,
@@ -7,9 +7,9 @@ import type {
   TableView,
 } from '#/api/govdata/datasource/model';
 
-import {computed, ref} from 'vue';
+import { computed, ref } from 'vue';
 
-import {useVbenModal} from '@vben/common-ui';
+import { useVbenModal } from '@vben/common-ui';
 
 import {
   DatabaseOutlined,
@@ -18,14 +18,7 @@ import {
   SearchOutlined,
   TableOutlined,
 } from '@antdv-next/icons';
-import {
-  Card,
-  Empty,
-  Input,
-  Spin,
-  Table,
-  Tag,
-} from 'antdv-next';
+import { Card, Empty, Input, Spin, Table, Tag } from 'antdv-next';
 
 import {
   getDataSourceDatabasesApi,
@@ -61,15 +54,30 @@ const filteredTables = computed(() => {
 });
 
 const columnTableColumns = [
-  {dataIndex: 'ordinalPosition', key: 'ordinalPosition', title: '#', width: 60},
-  {dataIndex: 'columnName', key: 'columnName', title: '字段名称', width: 180},
-  {dataIndex: 'dataType', key: 'dataType', title: '数据类型', width: 140},
-  {dataIndex: 'columnSize', key: 'columnSize', title: '长度', width: 90},
-  {dataIndex: 'decimalDigits', key: 'decimalDigits', title: '精度', width: 80},
-  {dataIndex: 'nullable', key: 'nullable', title: '允许为空', width: 100},
-  {dataIndex: 'primaryKey', key: 'primaryKey', title: '主键', width: 120},
-  {dataIndex: 'defaultValue', key: 'defaultValue', title: '默认值', width: 120},
-  {dataIndex: 'remarks', key: 'remarks', title: '备注说明'},
+  {
+    dataIndex: 'ordinalPosition',
+    key: 'ordinalPosition',
+    title: '#',
+    width: 60,
+  },
+  { dataIndex: 'columnName', key: 'columnName', title: '字段名称', width: 180 },
+  { dataIndex: 'dataType', key: 'dataType', title: '数据类型', width: 140 },
+  { dataIndex: 'columnSize', key: 'columnSize', title: '长度', width: 90 },
+  {
+    dataIndex: 'decimalDigits',
+    key: 'decimalDigits',
+    title: '精度',
+    width: 80,
+  },
+  { dataIndex: 'nullable', key: 'nullable', title: '允许为空', width: 100 },
+  { dataIndex: 'primaryKey', key: 'primaryKey', title: '主键', width: 120 },
+  {
+    dataIndex: 'defaultValue',
+    key: 'defaultValue',
+    title: '默认值',
+    width: 120,
+  },
+  { dataIndex: 'remarks', key: 'remarks', title: '备注说明' },
 ];
 
 async function loadDatabases() {
@@ -144,7 +152,7 @@ const [Modal, modalApi] = useVbenModal({
   footer: false,
   async onOpenChange(isOpen) {
     if (!isOpen) return;
-    const {id, name} = modalApi.getData() as { id?: ID; name?: string };
+    const { id, name } = modalApi.getData() as { id?: ID; name?: string };
     datasourceId.value = id;
     datasourceName.value = name || '数据源';
     await loadDatabases();
@@ -163,7 +171,7 @@ const [Modal, modalApi] = useVbenModal({
             class="flex items-center gap-1 cursor-pointer font-medium hover:text-primary transition-colors"
             @click="loadDatabases"
           >
-            <DatabaseOutlined/> 数据库/Schema
+            <DatabaseOutlined /> 数据库/Schema
           </span>
           <span v-if="currentDatabase" class="text-muted-foreground">/</span>
           <span
@@ -174,8 +182,11 @@ const [Modal, modalApi] = useVbenModal({
             {{ currentDatabase.databaseName }}
           </span>
           <span v-if="currentTable" class="text-muted-foreground">/</span>
-          <span v-if="currentTable" class="flex items-center gap-1 font-semibold text-primary">
-            <TableOutlined/> {{ currentTable.tableName }}
+          <span
+            v-if="currentTable"
+            class="flex items-center gap-1 font-semibold text-primary"
+          >
+            <TableOutlined /> {{ currentTable.tableName }}
           </span>
         </div>
         <span class="text-xs text-muted-foreground font-mono">
@@ -194,12 +205,15 @@ const [Modal, modalApi] = useVbenModal({
       <!-- Loading Spinner -->
       <Spin :spinning="loading" tip="正在探测读取元数据...">
         <!-- Step 1: Databases / Schemas List -->
-        <div v-if="step === 'databases' && !loading" class="flex flex-col gap-3">
+        <div
+          v-if="step === 'databases' && !loading"
+          class="flex flex-col gap-3"
+        >
           <div
             v-if="databases.length === 0 && !errorMessage"
             class="py-12 text-center"
           >
-            <Empty description="未探测到任何数据库或 Schema"/>
+            <Empty description="未探测到任何数据库或 Schema" />
           </div>
           <div v-else class="grid grid-cols-1 gap-3 md:grid-cols-2">
             <Card
@@ -214,7 +228,7 @@ const [Modal, modalApi] = useVbenModal({
                   <div
                     class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary"
                   >
-                    <DatabaseOutlined class="text-lg"/>
+                    <DatabaseOutlined class="text-lg" />
                   </div>
                   <div>
                     <div class="font-medium text-sm">
@@ -225,14 +239,17 @@ const [Modal, modalApi] = useVbenModal({
                     </div>
                   </div>
                 </div>
-                <RightOutlined class="text-xs text-muted-foreground"/>
+                <RightOutlined class="text-xs text-muted-foreground" />
               </div>
             </Card>
           </div>
         </div>
 
         <!-- Step 2: Tables List -->
-        <div v-else-if="step === 'tables' && !loading" class="flex flex-col gap-3">
+        <div
+          v-else-if="step === 'tables' && !loading"
+          class="flex flex-col gap-3"
+        >
           <div class="flex items-center justify-between gap-4">
             <Input
               v-model:value="tableFilterText"
@@ -241,7 +258,7 @@ const [Modal, modalApi] = useVbenModal({
               allow-clear
             >
               <template #prefix>
-                <SearchOutlined/>
+                <SearchOutlined />
               </template>
             </Input>
             <span class="text-xs text-muted-foreground">
@@ -249,13 +266,13 @@ const [Modal, modalApi] = useVbenModal({
             </span>
           </div>
 
-          <div
-            v-if="filteredTables.length === 0"
-            class="py-12 text-center"
-          >
-            <Empty description="未找到符合条件的表"/>
+          <div v-if="filteredTables.length === 0" class="py-12 text-center">
+            <Empty description="未找到符合条件的表" />
           </div>
-          <div v-else class="grid grid-cols-1 gap-2.5 max-h-[420px] overflow-y-auto pr-1">
+          <div
+            v-else
+            class="grid grid-cols-1 gap-2.5 max-h-[420px] overflow-y-auto pr-1"
+          >
             <div
               v-for="tbl in filteredTables"
               :key="tbl.tableName"
@@ -263,12 +280,15 @@ const [Modal, modalApi] = useVbenModal({
               @click="selectTable(tbl)"
             >
               <div class="flex items-center gap-3">
-                <TableOutlined class="text-muted-foreground"/>
+                <TableOutlined class="text-muted-foreground" />
                 <div>
                   <span class="font-mono text-sm font-medium">
                     {{ tbl.tableName }}
                   </span>
-                  <span v-if="tbl.remarks" class="ml-2 text-xs text-muted-foreground">
+                  <span
+                    v-if="tbl.remarks"
+                    class="ml-2 text-xs text-muted-foreground"
+                  >
                     ({{ tbl.remarks }})
                   </span>
                 </div>
@@ -277,14 +297,17 @@ const [Modal, modalApi] = useVbenModal({
                 <Tag :color="tbl.tableType === 'VIEW' ? 'purple' : 'blue'">
                   {{ tbl.tableType }}
                 </Tag>
-                <RightOutlined class="text-xs text-muted-foreground"/>
+                <RightOutlined class="text-xs text-muted-foreground" />
               </div>
             </div>
           </div>
         </div>
 
         <!-- Step 3: Columns Table -->
-        <div v-else-if="step === 'columns' && !loading" class="flex flex-col gap-3">
+        <div
+          v-else-if="step === 'columns' && !loading"
+          class="flex flex-col gap-3"
+        >
           <Table
             :data-source="columns"
             :columns="columnTableColumns"
@@ -298,7 +321,10 @@ const [Modal, modalApi] = useVbenModal({
               <template v-if="col.key === 'columnName'">
                 <div class="flex items-center gap-1.5 font-mono">
                   <span>{{ record.columnName }}</span>
-                  <KeyOutlined v-if="record.primaryKey" class="text-amber-500 text-xs"/>
+                  <KeyOutlined
+                    v-if="record.primaryKey"
+                    class="text-amber-500 text-xs"
+                  />
                 </div>
               </template>
               <template v-else-if="col.key === 'dataType'">
@@ -312,13 +338,14 @@ const [Modal, modalApi] = useVbenModal({
                 </Tag>
               </template>
               <template v-else-if="col.key === 'primaryKey'">
-                <Tag v-if="record.primaryKey" color="gold">
-                  PRIMARY KEY
-                </Tag>
+                <Tag v-if="record.primaryKey" color="gold"> PRIMARY KEY </Tag>
                 <span v-else class="text-muted-foreground">-</span>
               </template>
               <template v-else-if="col.key === 'defaultValue'">
-                <span v-if="record.defaultValue !== null" class="font-mono text-xs">
+                <span
+                  v-if="record.defaultValue !== null"
+                  class="font-mono text-xs"
+                >
                   {{ record.defaultValue }}
                 </span>
                 <span v-else class="text-muted-foreground">-</span>

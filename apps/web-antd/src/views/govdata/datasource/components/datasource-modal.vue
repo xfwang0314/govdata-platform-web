@@ -236,7 +236,7 @@ function schema(): VbenFormSchema[] {
         options: options?.classifications ?? [],
       },
       fieldName: 'classificationCode',
-      label: '数据分类',
+      label: '安全分类',
       rules: 'selectRequired',
     },
     {
