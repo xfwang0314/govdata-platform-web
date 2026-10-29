@@ -13,6 +13,7 @@ import type {
   PolicyOperationLogView,
   PolicyVersionView,
   ResourceDescriptor,
+  ResourceDirectoryNode,
   ResourceQueryParam,
   ResourceTreeNode,
 } from './model';
@@ -43,6 +44,26 @@ export function getResourceTreeApi(resourceType: string, status?: string) {
   return alovaInstance.get<ResourceTreeNode[]>(
     '/platform/auth/resources/tree',
     { params: { resourceType, status: status ?? 'ACTIVE' } },
+  );
+}
+
+export function getResourceDirectoryRootsApi(
+  categoryCode: string,
+  status = 'ACTIVE',
+) {
+  return alovaInstance.get<ResourceDirectoryNode[]>(
+    '/platform/auth/resources/directory/roots',
+    { params: { categoryCode, status } },
+  );
+}
+
+export function getResourceDirectoryChildrenApi(
+  parentId: ID,
+  status = 'ACTIVE',
+) {
+  return alovaInstance.get<ResourceDirectoryNode[]>(
+    '/platform/auth/resources/directory/children',
+    { params: { parentId, status } },
   );
 }
 

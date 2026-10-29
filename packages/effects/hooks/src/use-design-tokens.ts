@@ -25,6 +25,10 @@ export function useAntdDesignTokens() {
     colorSuccess: '',
     colorTextBase: '',
     colorWarning: '',
+    controlHeight: 36,
+    controlHeightLG: 40,
+    controlHeightSM: 32,
+    fontSize: 16,
     zIndexPopupBase: 2000, // 调整基础弹层层级，避免下拉等组件被弹窗或者最大化状态下的表格遮挡
   });
 
@@ -34,8 +38,20 @@ export function useAntdDesignTokens() {
   };
 
   watch(
-    () => preferences.theme,
+    () => [preferences.theme, preferences.app.compact],
     () => {
+      const fontSize = Number.parseFloat(
+        getCssVariableValue('--font-size-base', false),
+      );
+      const baseFontSize = Number.isFinite(fontSize) ? fontSize : 16;
+      const controlHeight = Math.round(
+        baseFontSize * (preferences.app.compact ? 2 : 2.25),
+      );
+
+      tokens.fontSize = baseFontSize;
+      tokens.controlHeight = controlHeight;
+      tokens.controlHeightSM = Math.max(24, controlHeight - 4);
+      tokens.controlHeightLG = controlHeight + 4;
       tokens.colorPrimary = getCssVariableValue('--primary');
 
       tokens.colorInfo = getCssVariableValue('--primary');
@@ -66,7 +82,7 @@ export function useAntdDesignTokens() {
       tokens.colorBgLayout = getCssVariableValue('--background-deep');
       tokens.colorBgMask = getCssVariableValue('--overlay');
     },
-    { immediate: true },
+    { deep: true, immediate: true },
   );
 
   return {

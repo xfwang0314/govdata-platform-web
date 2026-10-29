@@ -52,7 +52,7 @@ function divider(fieldName: string, text: string): VbenFormSchema {
   return {
     component: 'Divider',
     componentProps: {
-      class: 'mb-1',
+      class: 'gov-form-section-divider',
       orientation: 'left',
       plain: true,
     },
@@ -198,12 +198,13 @@ function schema(): VbenFormSchema[] {
     {
       component: 'TreeSelect',
       componentProps: {
-        fieldNames: { children: 'children', label: 'fullName', value: 'id' },
+        fieldNames: { children: 'children', label: 'label', value: 'id' },
         getPopupContainer,
         placeholder: '请选择权属部门',
         treeData: departmentTree.value,
         treeDefaultExpandAll: true,
-        treeNodeFilterProp: 'label',
+        treeNodeFilterProp: 'fullName',
+        treeNodeLabelProp: 'fullName',
       },
       fieldName: 'ownerDeptId',
       label: '权属部门',
@@ -313,7 +314,7 @@ function schema(): VbenFormSchema[] {
 }
 
 const [Form, formApi] = useVbenForm({
-  commonConfig: { componentProps: { class: 'w-full' }, labelWidth: 104 },
+  commonConfig: { componentProps: { class: 'w-full' }, labelWidth: 96 },
   schema: [],
   showDefaultActions: false,
   wrapperClass: 'grid-cols-1 md:grid-cols-2 gap-x-4',
@@ -530,7 +531,9 @@ const [Modal, modalApi] = useVbenModal({
 </script>
 
 <template>
-  <Modal :close-on-click-modal="false" :title="title" class="w-[1000px]">
-    <Form />
+  <Modal :close-on-click-modal="false" :title="title" class="w-[920px]">
+    <div class="gov-console-form px-1 pb-2">
+      <Form />
+    </div>
   </Modal>
 </template>

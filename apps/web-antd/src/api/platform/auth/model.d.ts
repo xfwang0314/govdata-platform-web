@@ -19,6 +19,7 @@ export interface ResourceTypeItem {
   actions: OptionItem[];
   attributes: AuthorizationAttributeItem[];
   capabilities: ResourceAuthorizationCapability[];
+  categoryCode: string;
   domainCode: string;
   domainLabel: string;
   moduleLabel: string;
@@ -27,6 +28,12 @@ export interface ResourceTypeItem {
   sourceModule: string;
   typeCode: string;
   typeLabel: string;
+}
+
+export interface ResourceCategoryItem {
+  code: string;
+  label: string;
+  order: number;
 }
 
 export type ResourceSelectionMode = 'INSTANCE' | 'TYPE';
@@ -50,6 +57,7 @@ export interface AuthzOptionsView {
   policyStatuses: OptionItem[];
   policyVersionStatuses: OptionItem[];
   resourceDomains: OptionItem[];
+  resourceCategories: ResourceCategoryItem[];
   resourceModules: OptionItem[];
   resourceStatuses: OptionItem[];
   resourceTypes: ResourceTypeItem[];
@@ -82,9 +90,21 @@ export interface ResourceQueryParam {
   keyword?: string;
   pageNum?: number;
   pageSize?: number;
+  resourceId?: ID;
   resourceType?: string;
   sourceModule?: string;
   status?: string;
+}
+
+export interface ResourceDirectoryNode {
+  code: string;
+  id: ID;
+  label: string;
+  leaf: boolean;
+  parentId?: ID;
+  resourceType: string;
+  sourceModule: string;
+  status: string;
 }
 
 export interface ResourceTreeNode {

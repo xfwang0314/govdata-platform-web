@@ -18,7 +18,7 @@ import {
   SearchOutlined,
   TableOutlined,
 } from '@antdv-next/icons';
-import { Card, Empty, Input, Spin, Table, Tag } from 'antdv-next';
+import { Alert, Empty, Input, Spin, Table } from 'antdv-next';
 
 import {
   getDataSourceDatabasesApi,
@@ -195,12 +195,12 @@ const [Modal, modalApi] = useVbenModal({
       </div>
 
       <!-- Error State -->
-      <div
+      <Alert
         v-if="errorMessage"
-        class="rounded-md border border-rose-200 bg-rose-50 p-4 text-sm text-rose-600"
-      >
-        {{ errorMessage }}
-      </div>
+        :message="errorMessage"
+        show-icon
+        type="error"
+      />
 
       <!-- Loading Spinner -->
       <Spin :spinning="loading" tip="正在探测读取元数据...">
@@ -215,33 +215,27 @@ const [Modal, modalApi] = useVbenModal({
           >
             <Empty description="未探测到任何数据库或 Schema" />
           </div>
-          <div v-else class="grid grid-cols-1 gap-3 md:grid-cols-2">
-            <Card
+          <div v-else class="overflow-hidden border border-border/70">
+            <button
               v-for="(db, idx) in databases"
               :key="idx"
-              hoverable
-              class="cursor-pointer transition-all hover:border-primary"
+              class="flex w-full items-center justify-between border-b border-border/60 px-4 py-3 text-left last:border-b-0 hover:bg-accent/50"
+              type="button"
               @click="selectDatabase(db)"
             >
-              <div class="flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                  <div
-                    class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary"
-                  >
-                    <DatabaseOutlined class="text-lg" />
+              <div class="flex min-w-0 items-center gap-3">
+                <DatabaseOutlined class="text-primary" />
+                <div class="min-w-0">
+                  <div class="truncate text-sm font-medium">
+                    {{ db.databaseName }}
                   </div>
-                  <div>
-                    <div class="font-medium text-sm">
-                      {{ db.databaseName }}
-                    </div>
-                    <div class="text-xs text-muted-foreground">
-                      {{ db.remarks || '数据库实例' }}
-                    </div>
+                  <div class="truncate text-xs text-muted-foreground">
+                    {{ db.remarks || '数据库实例' }}
                   </div>
                 </div>
-                <RightOutlined class="text-xs text-muted-foreground" />
               </div>
-            </Card>
+              <RightOutlined class="text-xs text-muted-foreground" />
+            </button>
           </div>
         </div>
 
@@ -271,12 +265,12 @@ const [Modal, modalApi] = useVbenModal({
           </div>
           <div
             v-else
-            class="grid grid-cols-1 gap-2.5 max-h-[420px] overflow-y-auto pr-1"
+            class="grid max-h-[420px] grid-cols-1 overflow-y-auto border border-border/70"
           >
             <div
               v-for="tbl in filteredTables"
               :key="tbl.tableName"
-              class="flex items-center justify-between rounded-lg border p-3 hover:border-primary hover:bg-accent/50 cursor-pointer transition-all"
+              class="flex cursor-pointer items-center justify-between border-b border-border/60 px-3 py-2.5 transition-colors last:border-b-0 hover:bg-accent/50"
               @click="selectTable(tbl)"
             >
               <div class="flex items-center gap-3">
@@ -294,9 +288,9 @@ const [Modal, modalApi] = useVbenModal({
                 </div>
               </div>
               <div class="flex items-center gap-2">
-                <Tag :color="tbl.tableType === 'VIEW' ? 'purple' : 'blue'">
+                <span class="text-xs text-muted-foreground">
                   {{ tbl.tableType }}
-                </Tag>
+                </span>
                 <RightOutlined class="text-xs text-muted-foreground" />
               </div>
             </div>
@@ -328,17 +322,17 @@ const [Modal, modalApi] = useVbenModal({
                 </div>
               </template>
               <template v-else-if="col.key === 'dataType'">
-                <Tag color="geekblue" class="font-mono text-xs">
+                <span class="font-mono text-xs">
                   {{ record.dataType }}
-                </Tag>
+                </span>
               </template>
               <template v-else-if="col.key === 'nullable'">
-                <Tag :color="record.nullable ? 'default' : 'red'">
+                <span class="text-xs text-muted-foreground">
                   {{ record.nullable ? 'YES' : 'NO' }}
-                </Tag>
+                </span>
               </template>
               <template v-else-if="col.key === 'primaryKey'">
-                <Tag v-if="record.primaryKey" color="gold"> PRIMARY KEY </Tag>
+                <span v-if="record.primaryKey" class="text-xs font-medium">PK 主键</span>
                 <span v-else class="text-muted-foreground">-</span>
               </template>
               <template v-else-if="col.key === 'defaultValue'">

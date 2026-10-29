@@ -1,4 +1,4 @@
-import type { ResourceTypeItem } from '#/api/platform/auth/model';
+import type { ResourceCategoryItem } from '#/api/platform/auth/model';
 
 import { describe, expect, it } from 'vitest';
 
@@ -7,34 +7,19 @@ import {
   resolveResourceNavigationFilter,
 } from './resource-navigation';
 
-const resourceTypes: ResourceTypeItem[] = [
-  {
-    actions: [],
-    attributes: [],
-    capabilities: ['RESOURCE_CATALOG'],
-    domainCode: 'CONNECTION',
-    domainLabel: '连接资源',
-    moduleLabel: '数据源管理',
-    purposes: [],
-    selectionModes: ['TYPE', 'INSTANCE'],
-    sourceModule: 'govdata-datasource',
-    typeCode: 'govdata:datasource',
-    typeLabel: '数据源',
-  },
+const resourceCategories: ResourceCategoryItem[] = [
+  { code: 'TECHNICAL_DATA_ASSET', label: '技术数据资产', order: 10 },
 ];
 
 describe('授权资源目录导航', () => {
-  it('按来源模块组织资源类型而不是拼接领域与类型名称', () => {
-    expect(buildResourceNavigation(resourceTypes)).toEqual([
+  it('按后端定义的分类及顺序构建顶层导航', () => {
+    expect(buildResourceNavigation(resourceCategories)).toEqual([
       {
-        children: [
-          {
-            key: 'type:govdata-datasource:govdata:datasource',
-            title: '数据源',
-          },
-        ],
-        key: 'module:govdata-datasource',
-        title: '数据源管理',
+        categoryCode: 'TECHNICAL_DATA_ASSET',
+        isLeaf: false,
+        key: 'category:TECHNICAL_DATA_ASSET',
+        selectable: false,
+        title: '技术数据资产',
       },
     ]);
   });

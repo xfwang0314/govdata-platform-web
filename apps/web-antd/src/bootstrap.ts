@@ -19,6 +19,8 @@ import App from './app.vue';
 import { router } from './router';
 import { initPopupContext } from './utils/context';
 
+import './styles/govdata-console.css';
+
 async function bootstrap(namespace: string) {
   // 初始化组件适配器
   await initComponentAdapter();

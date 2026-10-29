@@ -10,6 +10,7 @@ import {
   getDataSourceOptionsApi,
   getDataSourceTestHistoryApi,
 } from '#/api/govdata/datasource';
+import ConsoleStatus from '#/components/govdata/console-status.vue';
 
 const datasourceId = ref<ID>();
 const reasonLabels = ref<Record<string, string>>({});
@@ -92,27 +93,14 @@ const [Modal, modalApi] = useVbenModal({
     <div class="px-2 pb-4 pt-1">
       <Grid>
         <template #result="{ row }">
-          <span
-            class="inline-flex items-center gap-1 rounded border px-2 py-0.5 text-xs font-medium"
-            :class="
-              row.result === 'SUCCESS'
-                ? 'border-emerald-200 bg-emerald-50 text-emerald-600'
-                : 'border-rose-200 bg-rose-50 text-rose-600'
-            "
-          >
-            {{ row.result === 'SUCCESS' ? '成功' : '失败' }}
-          </span>
+          <ConsoleStatus
+            :label="row.result === 'SUCCESS' ? '成功' : '失败'"
+            :tone="row.result === 'SUCCESS' ? 'success' : 'danger'"
+          />
         </template>
 
         <template #latencyMs="{ row }">
-          <span
-            class="font-mono text-sm font-semibold"
-            :class="{
-              'text-amber-500': row.latencyMs > 1000 && row.latencyMs <= 3000,
-              'text-emerald-500': row.latencyMs <= 1000,
-              'text-red-500': row.latencyMs > 3000,
-            }"
-          >
+          <span class="font-mono text-xs text-foreground">
             {{ row.latencyMs }} ms
           </span>
         </template>
@@ -124,12 +112,14 @@ const [Modal, modalApi] = useVbenModal({
         <template #message="{ row }">
           <div
             v-if="row.message"
-            class="w-full truncate rounded bg-gray-50 p-1.5 text-xs text-gray-600"
+            class="w-full truncate bg-muted/40 p-1.5 text-xs text-muted-foreground"
             :title="row.message"
           >
             {{ row.message }}
           </div>
-          <span v-else class="text-xs text-gray-400">{{ row.reasonCode }}</span>
+          <span v-else class="text-xs text-muted-foreground">
+            {{ row.reasonCode }}
+          </span>
         </template>
       </Grid>
     </div>

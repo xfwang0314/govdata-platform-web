@@ -18,6 +18,7 @@ function resourceType(
     actions: [],
     attributes: [],
     capabilities: [capability],
+    categoryCode: 'TECHNICAL_DATA_ASSET',
     domainCode: 'test',
     domainLabel: '测试',
     moduleLabel,

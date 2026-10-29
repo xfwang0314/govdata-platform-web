@@ -8,94 +8,50 @@ defineProps<{
 </script>
 
 <template>
-  <section class="management-summary shrink-0">
-    <div class="management-summary__identity">
-      <div class="management-summary__mark datasource-mark" aria-hidden="true">
+  <section
+    class="management-summary shrink-0 flex items-center justify-between rounded-xl border border-border/80 bg-card px-4 py-3 shadow-xs"
+  >
+    <div class="flex items-center gap-3">
+      <div
+        class="management-summary__mark flex h-10 w-10 items-center justify-center rounded-lg bg-teal-500/10 text-teal-600 dark:text-teal-400 border border-teal-500/20 text-base"
+        aria-hidden="true"
+      >
         <DatabaseOutlined />
       </div>
       <div>
-        <h2 class="text-base font-semibold tracking-tight">数据连接目录</h2>
-        <p class="mt-0.5 text-xs text-muted-foreground">
+        <h2 class="text-sm font-semibold tracking-tight text-foreground">
+          数据连接目录
+        </h2>
+        <p class="text-xs text-muted-foreground">
           统一管理外部数据连接、凭据引用和连通性状态
         </p>
       </div>
     </div>
-    <div class="management-summary__metrics">
-      <div class="management-metric">
-        <DatabaseOutlined />
-        <span>{{ connectorCount }}</span>
-        <small>连接器</small>
+    <div class="management-summary__metrics flex items-center gap-2">
+      <div
+        class="management-metric flex items-center gap-2 rounded-lg border border-border/50 bg-muted/40 px-3 py-1.5 text-xs text-muted-foreground"
+      >
+        <DatabaseOutlined class="text-primary" />
+        <span class="font-mono text-sm font-bold text-foreground">{{
+          connectorCount
+        }}</span>
+        <small class="text-xs">连接器</small>
       </div>
-      <div class="management-metric">
-        <ApiOutlined />
-        <span>{{ connectorCategoriesCount }}</span>
-        <small>协议类别</small>
+      <div
+        class="management-metric flex items-center gap-2 rounded-lg border border-border/50 bg-muted/40 px-3 py-1.5 text-xs text-muted-foreground"
+      >
+        <ApiOutlined class="text-teal-600 dark:text-teal-400" />
+        <span class="font-mono text-sm font-bold text-foreground">{{
+          connectorCategoriesCount
+        }}</span>
+        <small class="text-xs">协议类别</small>
       </div>
     </div>
   </section>
 </template>
 
 <style scoped>
-.management-summary {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  min-height: 72px;
-  padding: 12px 16px;
-  background: hsl(var(--background));
-  border: 1px solid hsl(var(--border));
-  border-radius: 10px;
-}
-
-.management-summary__identity,
-.management-summary__metrics,
-.management-metric {
-  display: flex;
-  align-items: center;
-}
-
-.management-summary__identity {
-  gap: 12px;
-}
-
-.management-summary__mark {
-  display: grid;
-  place-items: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 9px;
-}
-
-.datasource-mark {
-  color: #087a72;
-  background: rgb(13 148 136 / 9%);
-  border: 1px solid rgb(13 148 136 / 20%);
-}
-
-.management-summary__metrics {
-  gap: 8px;
-}
-
-.management-metric {
-  gap: 7px;
-  min-width: 110px;
-  padding: 8px 11px;
-  color: hsl(var(--muted-foreground));
-  background: hsl(var(--muted) / 45%);
-  border-radius: 8px;
-}
-
-.management-metric span {
-  font-size: 16px;
-  font-weight: 650;
-  color: hsl(var(--foreground));
-}
-
-.management-metric small {
-  font-size: 12px;
-}
-
-@media (max-width: 800px) {
+@media (max-width: 768px) {
   .management-summary__metrics {
     display: none;
   }

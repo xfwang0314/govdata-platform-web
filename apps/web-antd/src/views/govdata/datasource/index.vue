@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { DataSourceView } from '#/api/govdata/datasource/model';
 
-import { computed, ref } from 'vue';
+import { ref } from 'vue';
 
 import { Page, useVbenModal } from '@vben/common-ui';
 
@@ -11,7 +11,16 @@ import DatasourceTable from './components/datasource-table.vue';
 import MetadataModal from './components/metadata-modal.vue';
 import TestHistoryModal from './components/test-history-modal.vue';
 
+interface DatasourceSummary {
+  connectorCategoriesCount: number;
+  connectorCount: number;
+}
+
 const tableRef = ref<InstanceType<typeof DatasourceTable>>();
+const datasourceSummary = ref<DatasourceSummary>({
+  connectorCategoriesCount: 0,
+  connectorCount: 0,
+});
 
 const [DatasourceModalComponent, datasourceModalApi] = useVbenModal({
   connectedComponent: DatasourceModal,
@@ -22,24 +31,6 @@ const [HistoryModal, historyModalApi] = useVbenModal({
 const [MetadataModalComponent, metadataModalApi] = useVbenModal({
   connectedComponent: MetadataModal,
 });
-
-const connectorLabels = ref<Record<string, string>>({});
-const connectorCategories = ref<string[]>([]);
-
-const connectorCount = computed(
-  () => Object.keys(connectorLabels.value).length,
-);
-const connectorCategoryCount = computed(
-  () => new Set(connectorCategories.value).size,
-);
-
-function handleLoaded(payload: {
-  connectorCategories: string[];
-  connectorLabels: Record<string, string>;
-}) {
-  connectorLabels.value = payload.connectorLabels;
-  connectorCategories.value = payload.connectorCategories;
-}
 
 function handleAdd() {
   datasourceModalApi.setData({});
@@ -63,29 +54,33 @@ function handleViewMetadata(row: DataSourceView) {
   });
   metadataModalApi.open();
 }
+
+function handleSummaryChange(summary: DatasourceSummary) {
+  datasourceSummary.value = summary;
+}
 </script>
 
 <template>
-  <Page auto-content-height>
+  <Page
+    auto-content-height
+    class="gov-console-page"
+    content-class="gov-console-page-content"
+  >
     <div class="flex h-full min-h-0 flex-col gap-3">
-      <!-- 统计指标概览组件 -->
       <DatasourceSummaryCard
-        :connector-categories-count="connectorCategoryCount"
-        :connector-count="connectorCount"
+        :connector-categories-count="datasourceSummary.connectorCategoriesCount"
+        :connector-count="datasourceSummary.connectorCount"
       />
-
-      <!-- 数据源列表与业务操作组件 -->
       <DatasourceTable
         ref="tableRef"
         @add="handleAdd"
         @edit="handleEdit"
-        @loaded="handleLoaded"
+        @summary-change="handleSummaryChange"
         @view-history="handleViewHistory"
         @view-metadata="handleViewMetadata"
       />
     </div>
 
-    <!-- 弹窗组件群 -->
     <DatasourceModalComponent @success="tableRef?.reload()" />
     <HistoryModal />
     <MetadataModalComponent />

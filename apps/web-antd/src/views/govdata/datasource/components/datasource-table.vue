@@ -6,8 +6,10 @@ import type { ID } from '#/api/common';
 import type { DataSourceView } from '#/api/govdata/datasource/model';
 
 import { onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
 
-import { Button, message, Popconfirm, Space, Tag } from 'antdv-next';
+import { DownOutlined, PlusOutlined } from '@antdv-next/icons';
+import { Button, Dropdown, message, Modal, Space } from 'antdv-next';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import {
@@ -28,10 +30,10 @@ const emit = defineEmits<{
   (e: 'add'): void;
   (e: 'edit', row: DataSourceView): void;
   (
-    e: 'loaded',
-    payload: {
-      connectorCategories: string[];
-      connectorLabels: Record<string, string>;
+    e: 'summaryChange',
+    summary: {
+      connectorCategoriesCount: number;
+      connectorCount: number;
     },
   ): void;
   (e: 'viewHistory', row: DataSourceView): void;
@@ -41,16 +43,20 @@ const emit = defineEmits<{
 const optionLabels = ref<Record<string, string>>({});
 const connectorLabels = ref<Record<string, string>>({});
 const reconcilingAuthorization = ref(false);
+const testingDatasourceId = ref<ID>();
+const router = useRouter();
 
 const formOptions: VbenFormProps = {
-  commonConfig: { componentProps: { allowClear: true }, labelWidth: 90 },
+  commonConfig: { componentProps: { allowClear: true }, labelWidth: 80 },
   schema: querySchema(),
-  wrapperClass: 'grid-cols-1 md:grid-cols-3 lg:grid-cols-4',
+  wrapperClass: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
 };
 
 const gridOptions: VxeGridProps = {
-  checkboxConfig: { highlight: true, reserve: true, trigger: 'default' },
+  cellConfig: { height: 48 },
   columns,
+  headerAlign: 'center',
+  headerCellConfig: { height: 44 },
   height: 'auto',
   keepSource: true,
   pagerConfig: {},
@@ -64,16 +70,17 @@ const gridOptions: VxeGridProps = {
         }),
     },
   },
+  rowConfig: { keyField: 'datasourceId' },
 };
 
-const [Grid, tableApi] = useVbenVxeGrid({ formOptions, gridOptions });
+const [Grid, tableApi] = useVbenVxeGrid({
+  formOptions,
+  gridOptions,
+  showSearchForm: true,
+});
 
 function optionLabel(value?: string) {
   return value ? (optionLabels.value[value] ?? value) : '-';
-}
-
-function handleAdd() {
-  emit('add');
 }
 
 function handleEdit(row: DataSourceView) {
@@ -86,6 +93,13 @@ function handleViewHistory(row: DataSourceView) {
 
 function handleViewMetadata(row: DataSourceView) {
   emit('viewMetadata', row);
+}
+
+function handleHarvestManagement(row: DataSourceView) {
+  router.push({
+    path: '/govdata/metadata-harvest',
+    query: { datasourceId: String(row.datasourceId) },
+  });
 }
 
 async function handleReconcileAuthorization() {
@@ -136,6 +150,7 @@ async function handleStatusChange(enabled: boolean, row: DataSourceView) {
 }
 
 async function handleTest(row: DataSourceView) {
+  testingDatasourceId.value = row.datasourceId;
   message.loading({ content: '正在测试连接…', key: 'datasource-test' });
   try {
     const result = await testDataSourceConnectionApi(row.datasourceId);
@@ -154,7 +169,25 @@ async function handleTest(row: DataSourceView) {
     await tableApi.reload();
   } catch {
     message.destroy('datasource-test');
+  } finally {
+    testingDatasourceId.value = undefined;
   }
+}
+
+function confirmDelete(row: DataSourceView) {
+  Modal.confirm({
+    content: '删除后将无法继续采集或查询该数据源。',
+    okButtonProps: { danger: true },
+    okText: '确认删除',
+    onOk: () => handleDelete(row),
+    title: `删除“${row.datasourceName}”？`,
+  });
+}
+
+function handleMoreAction(action: string, row: DataSourceView) {
+  if (action === 'metadata') handleViewMetadata(row);
+  if (action === 'history') handleViewHistory(row);
+  if (action === 'delete') confirmDelete(row);
 }
 
 function reload() {
@@ -182,9 +215,11 @@ onMounted(async () => {
   connectorLabels.value = Object.fromEntries(
     connectors.map((item) => [item.connectorCode, item.connectorName]),
   );
-  emit('loaded', {
-    connectorCategories: connectors.map((item) => item.category),
-    connectorLabels: connectorLabels.value,
+  emit('summaryChange', {
+    connectorCategoriesCount: new Set(
+      connectors.map((item) => item.category).filter(Boolean),
+    ).size,
+    connectorCount: connectors.length,
   });
   tableApi.formApi.updateSchema([
     {
@@ -202,9 +237,13 @@ onMounted(async () => {
 </script>
 
 <template>
-  <Grid class="min-h-0 flex-1 overflow-hidden" table-title="数据源目录">
+  <Grid class="min-h-0 flex-1 overflow-hidden" table-title="数据源列表">
     <template #toolbar-tools>
       <Space>
+        <Button type="primary" @click="emit('add')">
+          <template #icon><PlusOutlined /></template>
+          新建数据源
+        </Button>
         <Button
           v-access:code="['govdata:datasource:edit']"
           :loading="reconcilingAuthorization"
@@ -212,92 +251,127 @@ onMounted(async () => {
         >
           同步授权资源
         </Button>
-        <Button type="primary" @click="handleAdd">新建数据源</Button>
       </Space>
     </template>
 
     <template #datasourceName="{ row }">
-      <div class="flex min-w-0 flex-col gap-1 py-1">
-        <span class="truncate font-medium">{{ row.datasourceName }}</span>
-        <span class="truncate font-mono text-xs text-muted-foreground">
-          {{ row.datasourceCode }}
-        </span>
-      </div>
+      <button
+        class="max-w-full truncate hover:text-primary"
+        type="button"
+        @click="handleEdit(row)"
+      >
+        {{ row.datasourceName }}
+      </button>
+    </template>
+
+    <template #datasourceCode="{ row }">
+      <span class="block max-w-full truncate" :title="row.datasourceCode">
+        {{ row.datasourceCode }}
+      </span>
     </template>
 
     <template #connectorCode="{ row }">
-      <Tag :bordered="false" color="blue">
+      <span>
         {{ connectorLabels[row.connectorCode] ?? row.connectorCode }}
-      </Tag>
+      </span>
     </template>
 
     <template #environment="{ row }">
-      <Tag :color="row.environment === 'PROD' ? 'volcano' : 'default'">
+      <span>
         {{ optionLabel(row.environment) }}
-      </Tag>
+      </span>
+    </template>
+
+    <template #connectionTarget="{ row }">
+      <span
+        class="block max-w-full truncate"
+        :title="row.endpointConfig.connectionTarget || '-'"
+      >
+        {{ row.endpointConfig.connectionTarget || '—' }}
+      </span>
     </template>
 
     <template #status="{ row }">
-      <div class="flex items-center gap-2">
+      <div class="flex items-center justify-center">
         <ApiSwitch
           :api="(enabled) => handleStatusChange(Boolean(enabled), row)"
           :value="row.status === 'ACTIVE'"
         />
-        <span class="text-xs text-muted-foreground">
-          {{ optionLabel(row.status) }}
-        </span>
       </div>
     </template>
 
     <template #lastTestStatus="{ row }">
-      <div class="flex flex-col items-start gap-1">
-        <Tag
-          :bordered="false"
-          :color="
-            row.lastTestStatus === 'SUCCESS'
-              ? 'success'
-              : row.lastTestStatus === 'FAILED'
-                ? 'error'
-                : 'default'
-          "
-        >
-          {{ optionLabel(row.lastTestStatus) }}
-        </Tag>
-        <span v-if="row.lastTestTime" class="text-xs text-muted-foreground">
-          {{ row.lastTestTime.replace('T', ' ') }}
+      <div class="flex items-center justify-center gap-2 whitespace-nowrap">
+        <span class="inline-flex items-center gap-1.5">
+          <span
+            aria-hidden="true"
+            class="size-1.5 rounded-full"
+            :style="{
+              backgroundColor:
+                row.lastTestStatus === 'SUCCESS'
+                  ? 'hsl(var(--success))'
+                  : row.lastTestStatus === 'FAILED'
+                    ? 'hsl(var(--destructive))'
+                    : 'hsl(var(--muted-foreground) / 55%)',
+            }"
+          ></span>
+          <span>{{ optionLabel(row.lastTestStatus) }}</span>
+        </span>
+        <span>
+          {{ row.lastTestTime?.replace('T', ' ') || '—' }}
         </span>
       </div>
     </template>
 
     <template #action="{ row }">
-      <Space :size="2">
+      <div class="flex items-center justify-center gap-1">
         <Button size="small" type="link" @click="handleEdit(row)">
           编辑
         </Button>
-        <Button size="small" type="link" @click="handleTest(row)">
-          测试
-        </Button>
-        <Button size="small" type="link" @click="handleViewMetadata(row)">
-          元数据
-        </Button>
-        <Button size="small" type="link" @click="handleViewHistory(row)">
-          历史
-        </Button>
-        <Popconfirm
-          placement="left"
-          title="确定删除这个已停用的数据源吗？"
-          @confirm="handleDelete(row)"
+        <Button
+          :loading="String(testingDatasourceId) === String(row.datasourceId)"
+          :disabled="
+            testingDatasourceId !== undefined &&
+            String(testingDatasourceId) !== String(row.datasourceId)
+          "
+          size="small"
+          type="link"
+          @click="handleTest(row)"
         >
-          <Button
-            danger
-            :disabled="row.status !== 'DISABLED'"
-            size="small"
-            type="link"
-          >
-            删除
+          测试连接
+        </Button>
+        <Button
+          v-access:code="['govdata:metadata:harvest:list']"
+          size="small"
+          type="link"
+          @click="handleHarvestManagement(row)"
+        >
+          采集管理
+        </Button>
+        <Dropdown
+          placement="bottomRight"
+          :trigger="['click']"
+          :menu="{
+            items: [
+              { key: 'metadata', label: '查看元数据' },
+              { key: 'history', label: '测试历史' },
+              { type: 'divider' },
+              {
+                danger: true,
+                disabled: row.status !== 'DISABLED',
+                key: 'delete',
+                label: '删除数据源',
+              },
+            ],
+            onClick: ({ key }) => handleMoreAction(String(key), row),
+          }"
+        >
+          <Button size="small" type="text">
+            更多
+            <DownOutlined class="text-[10px]" />
           </Button>
-        </Popconfirm>
-      </Space>
+        </Dropdown>
+      </div>
     </template>
   </Grid>
 </template>

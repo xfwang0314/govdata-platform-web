@@ -29,15 +29,15 @@ describe('数据源管理页面契约', () => {
   it('使用目录式概览但仍由 Connector Catalog 提供统计事实', () => {
     expect(summaryCard).toContain('数据连接目录');
     expect(page).toContain('connectorCount');
-    expect(page).toContain('connectorCategoryCount');
+    expect(page).toContain('connectorCategoriesCount');
     expect(tableComponent).toContain('connectors.map((item) => item.category)');
   });
 
   it('保留固定高度列表和全部既有业务操作', () => {
-    expect(page).toContain('<Page auto-content-height>');
+    expect(page).toContain('auto-content-height');
     expect(tableComponent).toContain('class="min-h-0 flex-1 overflow-hidden"');
     expect(tableComponent).toContain('handleReconcileAuthorization');
-    expect(tableComponent).toContain('handleAdd');
+    expect(tableComponent).toContain("emit('add')");
     expect(tableComponent).toContain('handleEdit(row)');
     expect(tableComponent).toContain('handleTest(row)');
     expect(tableComponent).toContain('handleViewMetadata(row)');
