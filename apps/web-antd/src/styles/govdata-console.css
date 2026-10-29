@@ -149,6 +149,25 @@
   border-radius: 4px;
 }
 
+.gov-console-form .ant-form-item {
+  margin-bottom: var(--gov-console-form-gap);
+}
+
+.gov-console-form .ant-form-item-control,
+.gov-console-form .ant-form-item-control-input-content {
+  min-width: 0;
+}
+
+.gov-console-form-actions {
+  display: flex;
+  flex: none;
+  gap: 8px;
+  justify-content: flex-end;
+  padding: 12px 16px;
+  background: hsl(var(--card));
+  border-top: 1px solid var(--gov-console-divider);
+}
+
 .gov-console-form .ant-divider {
   margin: 8px 0 16px;
   font-size: 13px;
@@ -410,20 +429,9 @@
   overflow: auto;
 }
 
-.gov-harvest-configuration .ant-form-item-label > label {
-  font-size: var(--gov-console-body-size);
-  font-weight: 500;
-  color: hsl(var(--muted-foreground));
-  white-space: nowrap;
-}
-
 .gov-harvest-form-section {
-  padding-block: 20px;
-  border-bottom: 1px solid var(--gov-console-divider);
-}
-
-.gov-harvest-form-section:last-child {
-  border-bottom: 0;
+  min-width: 0;
+  padding-block: 8px;
 }
 
 .gov-harvest-form-section__heading {

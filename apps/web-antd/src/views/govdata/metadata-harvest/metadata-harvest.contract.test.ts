@@ -67,13 +67,14 @@ describe('元数据采集工作台', () => {
     expect(planWorkspace).toContain('regexError(rule)');
   });
 
-  it('计划表单使用左右标签布局且采集范围与调度配置并排', () => {
-    expect(planWorkspace).toContain(':label-col="{ flex: \'120px\' }"');
-    expect(planWorkspace).toContain(':wrapper-col="{ flex: \'1 1 0\' }"');
+  it('采集表单复用统一标签、网格及底部操作规格', () => {
+    expect(planWorkspace).toContain('v-bind="consoleFormLayout.nativeProps"');
+    expect(planWorkspace).toContain(':class="consoleFormLayout.gridClass"');
     expect(planWorkspace).toContain(
-      'class="grid grid-cols-1 gap-x-6 lg:grid-cols-2"',
+      '<footer class="gov-console-form-actions">',
     );
-    expect(planWorkspace).not.toContain('layout="vertical"');
+    expect(harvest).toContain(':width="consoleFormLayout.modalWidth"');
+    expect(planWorkspace).not.toContain("flex: '120px'");
   });
 
   it('权属部门树与数据源表单统一使用局部节点和完整选中路径', () => {

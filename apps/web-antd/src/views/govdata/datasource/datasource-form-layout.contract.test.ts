@@ -13,8 +13,16 @@ const source = readFileSync(
 
 describe('数据源表单分组布局契约', () => {
   it('分组标题占满表单网格整行且不保留空标签列', () => {
-    expect(source).toContain("formItemClass: 'col-span-full'");
-    expect(source).toContain('hideLabel: true');
+    const shared = readFileSync(
+      resolve(
+        process.cwd(),
+        'apps/web-antd/src/components/govdata/console-form.ts',
+      ),
+      'utf8',
+    );
+    expect(source).toContain('...consoleFormConfig()');
+    expect(shared).toContain("formItemClass: 'col-span-full'");
+    expect(shared).toContain('hideLabel: true');
     expect(source).not.toContain("class: 'col-span-full mb-1'");
   });
 

@@ -28,6 +28,10 @@ import {
   updateDataSourceApi,
 } from '#/api/govdata/datasource';
 import { getDeptTree } from '#/api/system/user';
+import {
+  consoleFormConfig,
+  consoleFormSection as divider,
+} from '#/components/govdata/console-form';
 
 import {
   normalizeSecurityLevelOptions,
@@ -47,21 +51,6 @@ const recordId = ref<ID>();
 const editLockVersion = ref<number>();
 
 const title = computed(() => (isUpdate.value ? '编辑数据源' : '新建数据源'));
-
-function divider(fieldName: string, text: string): VbenFormSchema {
-  return {
-    component: 'Divider',
-    componentProps: {
-      class: 'gov-form-section-divider',
-      orientation: 'left',
-      plain: true,
-    },
-    fieldName,
-    formItemClass: 'col-span-full',
-    hideLabel: true,
-    renderComponentContent: () => ({ default: () => text }),
-  };
-}
 
 function findConnector(code?: string) {
   return connectors.value.find((item) => item.connectorCode === code);
@@ -314,10 +303,8 @@ function schema(): VbenFormSchema[] {
 }
 
 const [Form, formApi] = useVbenForm({
-  commonConfig: { componentProps: { class: 'w-full' }, labelWidth: 96 },
+  ...consoleFormConfig(),
   schema: [],
-  showDefaultActions: false,
-  wrapperClass: 'grid-cols-1 md:grid-cols-2 gap-x-4',
 });
 
 async function refreshSchema() {
@@ -532,7 +519,7 @@ const [Modal, modalApi] = useVbenModal({
 
 <template>
   <Modal :close-on-click-modal="false" :title="title" class="w-[920px]">
-    <div class="gov-console-form px-1 pb-2">
+    <div class="gov-console-form">
       <Form />
     </div>
   </Modal>

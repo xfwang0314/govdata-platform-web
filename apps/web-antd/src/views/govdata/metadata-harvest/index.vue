@@ -28,6 +28,7 @@ import {
   updateHarvestPlanApi,
 } from '#/api/govdata/metadata-harvest';
 import ApiSwitch from '#/components/global/api-switch.vue';
+import { consoleFormLayout } from '#/components/govdata/console-form';
 
 import HarvestPlanRunsPanel from './components/harvest-plan-runs-panel.vue';
 import HarvestPlanWorkspace from './components/harvest-plan-workspace.vue';
@@ -371,7 +372,7 @@ onMounted(async () => {
       :footer="null"
       :mask-closable="false"
       :open="Boolean(workspace)"
-      :width="1000"
+      :width="consoleFormLayout.modalWidth"
       centered
       destroy-on-close
       wrap-class-name="gov-harvest-plan-modal"

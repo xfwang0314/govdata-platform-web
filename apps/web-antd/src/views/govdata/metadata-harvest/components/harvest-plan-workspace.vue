@@ -44,6 +44,7 @@ import {
 } from '#/api/govdata/metadata-harvest';
 import { getDeptTree } from '#/api/system/user';
 import { CronInput } from '#/components/cron';
+import { consoleFormLayout } from '#/components/govdata/console-form';
 
 import { buildDatabaseOptions, buildSchemaOptions } from '../harvest-namespace';
 
@@ -423,48 +424,10 @@ onMounted(async () => {
           </p>
         </div>
       </div>
-      <div class="flex items-center gap-2">
-        <template v-if="editing">
-          <Button @click="cancelEdit">取消</Button>
-          <Button
-            v-access:code="[
-              isCreate
-                ? 'govdata:metadata:harvest:add'
-                : 'govdata:metadata:harvest:edit',
-            ]"
-            :loading="submitting"
-            type="primary"
-            @click="submit"
-          >
-            保存计划
-          </Button>
-        </template>
-        <template v-else>
-          <Button
-            v-access:code="['govdata:metadata:harvest:edit']"
-            @click="editing = true"
-          >
-            编辑计划
-          </Button>
-          <Button
-            v-access:code="['govdata:metadata:harvest:execute']"
-            :loading="executing"
-            type="primary"
-            @click="execute"
-          >
-            立即采集
-          </Button>
-        </template>
-      </div>
     </header>
 
-    <div class="gov-harvest-configuration">
-      <Form
-        :colon="false"
-        :disabled="readonly"
-        :label-col="{ flex: '120px' }"
-        :wrapper-col="{ flex: '1 1 0' }"
-      >
+    <div class="gov-harvest-configuration gov-console-form">
+      <Form v-bind="consoleFormLayout.nativeProps" :disabled="readonly">
         <section class="gov-harvest-form-section">
           <Divider
             class="gov-form-section-divider"
@@ -473,7 +436,7 @@ onMounted(async () => {
           >
             基础配置
           </Divider>
-          <div class="grid grid-cols-1 gap-x-5 md:grid-cols-2">
+          <div :class="consoleFormLayout.gridClass">
             <FormItem label="计划名称" required>
               <Input
                 v-model:value="model.harvestPlanName"
@@ -517,7 +480,7 @@ onMounted(async () => {
           </div>
         </section>
 
-        <div class="grid grid-cols-1 gap-x-6 lg:grid-cols-2">
+        <div :class="consoleFormLayout.gridClass">
           <section class="gov-harvest-form-section">
             <Divider
               class="gov-form-section-divider"
@@ -688,5 +651,40 @@ onMounted(async () => {
         </section>
       </Form>
     </div>
+    <footer class="gov-console-form-actions">
+      <div class="flex items-center gap-2">
+        <template v-if="editing">
+          <Button @click="cancelEdit">取消</Button>
+          <Button
+            v-access:code="[
+              isCreate
+                ? 'govdata:metadata:harvest:add'
+                : 'govdata:metadata:harvest:edit',
+            ]"
+            :loading="submitting"
+            type="primary"
+            @click="submit"
+          >
+            保存计划
+          </Button>
+        </template>
+        <template v-else>
+          <Button
+            v-access:code="['govdata:metadata:harvest:edit']"
+            @click="editing = true"
+          >
+            编辑计划
+          </Button>
+          <Button
+            v-access:code="['govdata:metadata:harvest:execute']"
+            :loading="executing"
+            type="primary"
+            @click="execute"
+          >
+            立即采集
+          </Button>
+        </template>
+      </div>
+    </footer>
   </section>
 </template>

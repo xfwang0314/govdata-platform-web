@@ -30,6 +30,8 @@
 
 数据中台业务页面同时遵循 [控制台设计基线](govdata-console-design.md)。新增资源管理页和目录工作区优先复用其中的 Design Token、项目标准 `useVbenVxeGrid` / `BasicTable`、`gov-metadata-workbench` 与 `ConsoleStatus`，不得为单个页面另建一套颜色、圆角、阴影和间距体系。
 
+新建和编辑表单必须遵循控制台设计基线中的“新建与编辑表单统一规格”，复用 `components/govdata/console-form.ts`，不得自行配置另一套标签宽度、分组及按钮位置。
+
 ### 2.1 UI 组件库导入 (`antdv-next`)
 
 - `components/global` 已注册的组件允许使用全局标签；其他 Ant Design Vue 组件从 `antdv-next` 显式按需导入。
